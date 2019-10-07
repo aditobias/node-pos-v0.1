@@ -6,7 +6,7 @@ module.exports = function main(inputs) {
     listOfBoughtItems = inputs;
 
     listOfBoughtItems.forEach(function(item){
-        if(listOfBoughtItemsForReceipt.find(boughtItem => boughtItem['Barcode'] === item.Barcode)){
+        if(listOfBoughtItemsForReceipt.find(boughtItem => boughtItem['Barcode'] == item.Barcode)){
             listOfBoughtItemsForReceipt[listOfBoughtItemsForReceipt.findIndex(boughtItem => boughtItem.Barcode === item.Barcode)].Total += 1;
         }else{
             var listedItem = {
@@ -25,7 +25,7 @@ module.exports = function main(inputs) {
 };
 function finalReceipt(){
     listOfBoughtItemsForReceipt.forEach(function(item){
-        if(item.Unit === 'bottle'){
+        if(item.Unit == 'bottle'){
             finalString += 'Name: ' + item.Name +', Quantity: ' + item.Total 
                         +' bottles, Unit price: '+ item.Price.toFixed(2) +' (yuan), Subtotal: '
                         + calculateSubTotal(item).toFixed(2) +' (yuan)\n';
