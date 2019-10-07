@@ -1,45 +1,62 @@
+var listOfBoughtItems = [];
+var finalString = "";
+var listOfBoughtItemsForReceipt = [];
+
 module.exports = function main(inputs) {
-    var listOfItems = [];
-    
-    inputs.forEach(function(item){
-        if(listOfItems.find(listItem => listItem['Barcode'] === item.Barcode)){
-            var editableItem = listOfItems[listOfItems.findIndex(element => element.Barcode === item.Barcode)];
-            editableItem.Total += 1;
+    listOfBoughtItems = inputs;
+
+    listOfBoughtItems.forEach(function(item){
+        if(listOfBoughtItemsForReceipt.find(boughtItem => boughtItem['Barcode'] === item.Barcode)){
+            listOfBoughtItemsForReceipt[listOfBoughtItemsForReceipt.findIndex(boughtItem => boughtItem.Barcode === item.Barcode)].Total += 1;
         }else{
-            var item = {
+            var listedItem = {
                 Barcode : item.Barcode,
                 Name : item.Name,
                 Unit : item.Unit,
                 Price : item.Price,
                 Total : 1
             };
-            listOfItems.push(item);
+            listOfBoughtItemsForReceipt.push(listedItem);
         }
     }); 
     
-    return '***<store earning no money>Receipt ***\n' +
-    stringBuilder(listOfItems) +
-    '----------------------\n' +
-    'Total: 23.00 (yuan)\n' +
-    '**********************\n';
+    return finalReceipt();
     
 };
-function stringBuilder(listOfItems){
-    var finalString = "";
-    
-    listOfItems.forEach(function(item){
+function finalReceipt(){
+    listOfBoughtItemsForReceipt.forEach(function(item){
         if(item.Unit === 'bottle'){
-            finalString += 'Name: ' + item.Name +', Quantity: ' + item.Total +' bottles, Unit price: '+item.Price.toFixed(2)+' (yuan), Subtotal: '+ calculateTotal(item)+'.00 (yuan)\n';
+            finalString += 'Name: ' + item.Name +', Quantity: ' + item.Total 
+                        +' bottles, Unit price: '+ item.Price.toFixed(2) +' (yuan), Subtotal: '
+                        + calculateSubTotal(item).toFixed(2) +' (yuan)\n';
         }else{
-            finalString += 'Name: ' + item.Name +', Quantity: ' + item.Total +', Unit price: '+item.Price.toFixed(2)+' (yuan), Subtotal: '+ calculateTotal(item)+'.00 (yuan)\n';
+            finalString += 'Name: ' + item.Name +', Quantity: ' + item.Total 
+                        +', Unit price: '+ item.Price.toFixed(2) +' (yuan), Subtotal: '
+                        + calculateSubTotal(item).toFixed(2) +' (yuan)\n';
         }
     })
 
-    return finalString;
+
+    return '***<store earning no money>Receipt ***\n' +
+            finalString +
+            '----------------------\n' +
+            'Total: '+ calculateFinalTotal() +' (yuan)\n' +
+            '**********************\n';
     
 };
 
-function calculateTotal(item){
+function calculateSubTotal(item){
     return item.Total * item.Price;
+}
+
+function calculateFinalTotal(){
+    return listOfBoughtItems
+    .map(listedItem => listedItem.Price)
+    .reduce(sumForTotal, 0)
+    .toFixed(2);
+}
+
+function sumForTotal(total, sum){
+    return total + sum;
 }
 
